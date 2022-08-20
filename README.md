@@ -1,10 +1,17 @@
-# A simple docker-compose template
+# A simple base of docker infrastructure
 
 Revision: August 2022
 
 **keywords**: software-architecture
 
 *contacts*: Markus von Steht
+
+## Description
+
+The stack contains the following modules:
+
+- [Portainer](https://www.portainer.io/) to monitor and administer what is happening with docker
+- [Treafik](https://traefik.io/) to monitor and administer the networking namespace
 
 ## Running the Docker compose pipeline
 

@@ -1,40 +1,69 @@
-# a sample compose file
+# docker-compose file
 version: '3'
 services:
-  alpine:
-    build:
-      context: ./compose/refined_image
-      args:
-       - BASEIMAGE=${FIRST_BASE_IMAGE}
-    image: ${FIRST_REFINED_IMAGE_ROOT}:${STACK_VERSION}
-    container_name: ${STACK_NAME:-defstack}_alpine
+  portainer:
+    image: ${FIRST_BASE_IMAGE}
+    container_name: ${STACK_NAME:-defstack}_portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     ports:
-     - 8080:5000
+      - 8000:8000
+      - 9000:9000
+      - 9443:9443
     networks:
-     - mydefaultstack
+      - mydefaultstack
     environment:
-     - EXAMPLE_VAR_VERBOSE=true
-     - FLASK_DEBUG=1
-     - FLASK_APP=app.py
-     - FLASK_RUN_HOST=0.0.0.0
+      - EXAMPLE_VAR_VERBOSE=true
+      - CONTAINER_USERNAME=${FIRST_USERNAME}
+      - CONTAINER_PASSWORD=${FIRST_PASSWORD}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN_NAME}`)"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
     volumes:
-     - ./compose/refined_image/code:/code
-    depends_on:
-     - redis
-  redis:
-    image: "redis:alpine"
-    container_name: ${STACK_NAME:-defstack}_redis
-#    ports:
-#     - 6379:6379
-#    volumes:
-#      - persistent_data:/persistent_data
+      - /var/run/docker.sock:/var/run/docker.sock
+      - persistent_portainer_data:/data
+      - /etc/localtime:/etc/localtime:ro
+  nginx:
+    image: ${THIRD_BASE_IMAGE}
+    container_name: ${STACK_NAME:-defstack}_nginx
     networks:
-     - mydefaultstack
-
+      - mydefaultstack
+    environment:
+      - EXAMPLE_VAR_VERBOSE=true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.rule=Host(`nginx.${DOMAIN_NAME}`)"
+  traefik:
+    image: ${SECOND_BASE_IMAGE}
+    container_name: ${STACK_NAME:-defstack}_traefik
+    restart: unless-stopped
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    networks:
+      - mydefaultstack
+    environment:
+      - EXAMPLE_VAR_VERBOSE=true
+      - CONTAINER_USERNAME=${SECOND_USERNAME}
+      - CONTAINER_PASSWORD=${SECOND_PASSWORD}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN_NAME}`)"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 volumes:
-  persistent_data:
-    driver: local
-
+  persistent_portainer_data:
+    external: true
+    name: portainer_data
 networks:
   mydefaultstack:
     name: mydefaultstack
