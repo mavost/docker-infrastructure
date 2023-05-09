@@ -35,6 +35,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.nginx.rule=Host(`nginx.${DOMAIN_NAME}`)"
+    volumes:
+      - ./site-content:/usr/share/nginx/html
   traefik:
     image: ${SECOND_BASE_IMAGE}
     container_name: ${STACK_NAME:-defstack}_traefik

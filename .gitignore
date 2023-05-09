@@ -9,3 +9,8 @@ venv.bak/
 
 # Caches
 __pycache__/
+
+# Ignore Webhosting Stuff
+!site-content
+site-content/*
+!site-content/.gitignore
