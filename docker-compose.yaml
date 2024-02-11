@@ -15,16 +15,16 @@ services:
       - mydefaultstack
     environment:
       - EXAMPLE_VAR_VERBOSE=true
-      - CONTAINER_USERNAME=${FIRST_USERNAME}
-      - CONTAINER_PASSWORD=${FIRST_PASSWORD}
+      - CONTAINER_USERNAME=${FIRST_USERNAME:-null}
+      - CONTAINER_PASSWORD=${FIRST_PASSWORD:-null}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN_NAME}`)"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - persistent_portainer_data:/data
       - /etc/localtime:/etc/localtime:ro
+      - persistent_portainer_data:/data
   nginx:
     image: ${THIRD_BASE_IMAGE}
     container_name: ${STACK_NAME:-defstack}_nginx
@@ -34,6 +34,7 @@ services:
       - EXAMPLE_VAR_VERBOSE=true
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.nginx.tls=true"
       - "traefik.http.routers.nginx.rule=Host(`nginx.${DOMAIN_NAME}`)"
     volumes:
       - ./site-content:/usr/share/nginx/html
@@ -49,21 +50,29 @@ services:
       - "--entrypoints.web.address=:80"
     ports:
       - "80:80"
+      - "443:443"
       - "8080:8080"
     networks:
       - mydefaultstack
     environment:
       - EXAMPLE_VAR_VERBOSE=true
-      - CONTAINER_USERNAME=${SECOND_USERNAME}
-      - CONTAINER_PASSWORD=${SECOND_PASSWORD}
+      - CONTAINER_USERNAME=${SECOND_USERNAME:-null}
+      - CONTAINER_PASSWORD=${SECOND_PASSWORD:-null}
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - DOMAIN_ALT=${DOMAIN_ALT}
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.traefik.tls=true"
       - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN_NAME}`)"
       - "traefik.http.services.traefik.loadbalancer.server.port=8080"
     volumes:
+      - ./config/traefik_dynamic_conf.yaml:/etc/traefik/dynamic_conf.yaml:ro
+      - ./config/traefik_traefik.yaml:/etc/traefik/traefik.yaml:ro
+      - ./certs:/etc/certs:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
 volumes:
   persistent_portainer_data:
+    # for new platform setup - switch false/true during first/subsequent runs
     external: true
     name: portainer_data
 networks:

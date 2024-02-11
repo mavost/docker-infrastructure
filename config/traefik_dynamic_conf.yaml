@@ -1,0 +1,19 @@
+http:
+  routers:
+    traefik:
+      rule: "Host(`traefik.{{env "DOMAIN_NAME"}}`)"
+      service: "api@internal"
+      tls:
+        domains:
+          - main: "Host(`{{env "DOMAIN_NAME"}}`)"
+            sans:
+              - "Host(`*.{{env "DOMAIN_NAME"}}`)"
+          - main: "Host(`{{env "DOMAIN_ALT"}}`)"
+          - main: "localhost"
+          - main: "127.0.0.1"
+          - main: "::1"
+
+tls:
+  certificates:
+    - certFile: "/etc/certs/local-cert.pem"
+      keyFile: "/etc/certs/local-key.pem"
