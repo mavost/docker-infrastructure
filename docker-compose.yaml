@@ -4,7 +4,7 @@ services:
   portainer:
     image: ${FIRST_BASE_IMAGE}
     container_name: ${STACK_NAME:-defstack}_portainer
-    restart: unless-stopped
+    restart: always
     security_opt:
       - no-new-privileges:true
     ports:
@@ -26,23 +26,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/localtime:/etc/localtime:ro
       - persistent_portainer_data:/data
-  nginx:
-    image: ${THIRD_BASE_IMAGE}
-    container_name: ${STACK_NAME:-defstack}_nginx
-    networks:
-      - mydefaultstack
-    environment:
-      - EXAMPLE_VAR_VERBOSE=true
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.nginx.tls=true"
-      - "traefik.http.routers.nginx.rule=Host(`nginx.${DOMAIN_NAME}`)"
-    volumes:
-      - ./site-content:/usr/share/nginx/html
   traefik:
     image: ${SECOND_BASE_IMAGE}
     container_name: ${STACK_NAME:-defstack}_traefik
-    restart: unless-stopped
+    restart: always
+    networks:
+      - mydefaultstack
     command:
       #- "--log.level=DEBUG"
       - "--api.insecure=true"
@@ -53,8 +42,6 @@ services:
       - "80:80"
       - "443:443"
       - "8080:8080"
-    networks:
-      - mydefaultstack
     environment:
       - EXAMPLE_VAR_VERBOSE=true
       - CONTAINER_USERNAME=${SECOND_USERNAME:-null}
@@ -71,6 +58,20 @@ services:
       - ./config/traefik_traefik.yaml:/etc/traefik/traefik.yaml:ro
       - ./certs:/etc/certs:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
+  nginx:
+    image: ${THIRD_BASE_IMAGE}
+    container_name: ${STACK_NAME:-defstack}_nginx
+    restart: unless-stopped
+    networks:
+      - mydefaultstack
+    environment:
+      - EXAMPLE_VAR_VERBOSE=true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.tls=true"
+      - "traefik.http.routers.nginx.rule=Host(`nginx.${DOMAIN_NAME}`)"
+    volumes:
+      - ./site-content:/usr/share/nginx/html
 volumes:
   persistent_portainer_data:
     # for new platform setup - switch false/true during first/subsequent runs
