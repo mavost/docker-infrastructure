@@ -19,6 +19,7 @@ services:
       - CONTAINER_PASSWORD=${FIRST_PASSWORD:-null}
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.portainer.tls=true"
       - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN_NAME}`)"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
     volumes:
