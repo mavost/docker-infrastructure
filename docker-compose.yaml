@@ -80,3 +80,8 @@ volumes:
 networks:
   mydefaultstack:
     name: mydefaultstack
+    driver: bridge
+    external: true
+    labels:
+      - "testkey=testvalue"
+      - "${DOMAIN_BACKWARD-com.example}.description=My standard network"
