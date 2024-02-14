@@ -81,6 +81,7 @@ networks:
   mydefaultstack:
     name: mydefaultstack
     driver: bridge
+    attachable: true
     external: true
     labels:
       - "testkey=testvalue"
