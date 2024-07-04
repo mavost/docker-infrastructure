@@ -76,6 +76,7 @@ networks:
     name: mydefaultstack
     driver: bridge
     attachable: true
+    # for new platform setup - switch false/true during first/subsequent runs
     external: true
     labels:
       - "testkey=testvalue"
