@@ -16,9 +16,12 @@ The stack contains the following modules:
 ## Running the Docker compose pipeline
 
 1. Copy `.env.dist` to `.env` (no adjustments required / for future use with credentials)
-2. Run `make run-compose` and let the container for the *simple* stack come online.
-3. Use <kbd>CTRL</kbd>+<kbd>C</kbd> to shut down the stack
-4. Invoke `make clean` and `make clean stack=extended`, respectively to remove the stack
+2. Prior to first run spawn the dedicated docker network in `docker-compose.yaml` section
+   `network` by setting `external: false`. On shutting down (not destroying) the stack
+   this should be reset to `false`.
+3. Run `make run-compose` and let the container for the *simple* stack come online.
+4. Use <kbd>CTRL</kbd>+<kbd>C</kbd> to shut down the stack.
+5. Invoke `make clean` and `make clean stack=extended`, respectively to remove the stack.
 
 ### Manual access to container
 
