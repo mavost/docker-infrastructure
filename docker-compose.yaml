@@ -90,13 +90,20 @@ services:
 #      - 'traefik.http.middlewares.pihole.addprefix.prefix=/admin'
       - 'traefik.http.services.pihole.loadBalancer.server.port=80'
     volumes:
-      - './config/etc-pihole:/etc/pihole'
-      - './config/etc-dnsmasq.d:/etc/dnsmasq.d'
+      - persistent_etc-pihole_data:/etc/pihole
+      - persistent_etc-dnsmasq_data:/etc/dnsmasq.d
 volumes:
   persistent_portainer_data:
     # for new platform setup - switch false/true during first/subsequent runs
     external: true
     name: portainer_data
+  persistent_etc-pihole_data:
+    external: true
+    name: etc_pihole_data
+  persistent_etc-dnsmasq_data:
+    external: true
+    name: etc_dnsmasq_data
+
 networks:
   mydefaultstack:
     name: mydefaultstack
