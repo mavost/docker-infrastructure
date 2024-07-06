@@ -66,6 +66,32 @@ services:
       - "traefik.http.routers.nginx.rule=Host(`nginx.${DOMAIN_NAME}`)"
     volumes:
       - ./site-content:/usr/share/nginx/html
+  pihole:
+    hostname: pihole.${DOMAIN_NAME}
+    image: ${FOURTH_BASE_IMAGE}
+    container_name: pihole
+    restart: unless-stopped
+    networks:
+        - mydefaultstack
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+#      - "67:67/udp" # only relevant for DHCP mode
+#      - "8053:80/tcp"
+    environment:
+      TZ: ${PIHOLE_TZ}
+      WEBPASSWORD: 'pihole'
+      PIHOLE_DNS_: ${PIHOLE_DNS1};${PIHOLE_DNS2} # Pihole-DNS: "Quad9
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pihole.tls=true"
+      - "traefik.http.routers.pihole.rule=Host(`pihole.${DOMAIN_NAME}`)"
+      - 'traefik.http.routers.pihole.entrypoints=websecure'
+#      - 'traefik.http.middlewares.pihole.addprefix.prefix=/admin'
+      - 'traefik.http.services.pihole.loadBalancer.server.port=80'
+    volumes:
+      - './config/etc-pihole:/etc/pihole'
+      - './config/etc-dnsmasq.d:/etc/dnsmasq.d'
 volumes:
   persistent_portainer_data:
     # for new platform setup - switch false/true during first/subsequent runs
