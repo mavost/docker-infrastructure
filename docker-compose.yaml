@@ -81,7 +81,8 @@ services:
     environment:
       TZ: ${PIHOLE_TZ}
       WEBPASSWORD: 'pihole'
-      PIHOLE_DNS_: ${PIHOLE_DNS1};${PIHOLE_DNS2} # Pihole-DNS: "Quad9
+      # Pihole-DNS: e.g.,"Quad9
+      PIHOLE_DNS_: ${PIHOLE_DNS1};${PIHOLE_DNS2};${PIHOLE_DNS3};${PIHOLE_DNS4}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pihole.tls=true"
