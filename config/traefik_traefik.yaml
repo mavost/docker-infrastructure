@@ -28,5 +28,8 @@ entryPoints:
           to: websecure
           scheme: https
 
+  db:
+    address: ':5432'
+
   websecure:
     address: ':443'
