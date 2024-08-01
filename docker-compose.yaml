@@ -78,7 +78,7 @@ services:
       - "53:53/tcp"
       - "53:53/udp"
 #      - "67:67/udp" # only relevant for DHCP mode
-#      - "8053:80/tcp"
+      - "8888:80"
     dns:
       - "9.9.9.9"
       - "149.112.112.112"
