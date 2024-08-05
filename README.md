@@ -46,6 +46,10 @@ Using docker:
 3. Running `mkcert -install`, results in *"Created a new local CA"*.
 The file `rootCA.pem` will usually be generated in the folder `$HOME/.local/share/mkcert` which can be confirmed using `mkcert -CAROOT`.
 4. (Optional) Copy `rootCA.pem` to relevant area of operations and register with trust store or install in browser.
+    - For Ubuntu Linux this corresponds to copying the file to `/usr/local/share/ca-certificates`,
+    - running `sudo update-ca-certificates`,
+    - and confirming that the new certificate is added using:  
+    `awk -v cmd='openssl x509 -noout -subject' '/BEGIN/{close(cmd)};{print | cmd}' < /etc/ssl/certs/ca-certificates.crt`
 5. Build certificates for specific endpoints with or without wildcards:
 
     ```bash
