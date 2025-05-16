@@ -53,8 +53,7 @@ The file `rootCA.pem` will usually be generated in the folder `$HOME/.local/shar
 5. Build certificates for specific endpoints with or without wildcards:
 
     ```bash
-    mkcert -cert-file local-cert.pem -key-file local-key.pem example.com "*.example.com" example.test localhost 127.0.0.1
-    ::1
+    mkcert -cert-file local-cert.pem -key-file local-key.pem example.com "*.example.com" example.test localhost 127.0.0.1 ::1
     ```
 
     ```bash
