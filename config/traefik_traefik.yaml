@@ -31,5 +31,8 @@ entryPoints:
   db:
     address: ':5432'
 
+  sqlserver:
+    address: ':1433'
+
   websecure:
     address: ':443'

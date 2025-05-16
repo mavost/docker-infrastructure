@@ -37,6 +37,7 @@ services:
       - "443:443"
       - "8080:8080"
       - "5432:5432"
+      - "1433:1433"
     environment:
       - EXAMPLE_VAR_VERBOSE=true
       - CONTAINER_USERNAME=${SECOND_USERNAME:-null}
